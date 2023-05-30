@@ -48,7 +48,8 @@ function getTotalAmount(invoice) {
     return totalAmount;
 }
 
-function statement(invoice) {
+function renderPlainText(invoice) {
+
     let result = `Statement for ${invoice.customer}\n`;
 
     for (let perf of invoice.performances) {
@@ -60,6 +61,10 @@ function statement(invoice) {
     result += `You earned ${getTotalVolumeCredits(invoice)} credits\n`;
 
     return result;
+}
+
+function statement(invoice) {
+    return renderPlainText(invoice);
 }
 
 function amountFor(perf) {
