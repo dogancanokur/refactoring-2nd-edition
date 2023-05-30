@@ -32,7 +32,7 @@ function getUsdFormat(number) {
     }).format(number);
 }
 
-function getTotalVolumeCredits(invoice) { // 3 for loop performansa etki edecektir. dikkat etmek fayda sağlar
+function getTotalVolumeCredits(invoice) { // 3 for loop will affect performance. It is helpful to pay attention
     let totalVolumeCredits = 0;
     for (let perf of invoice.performances) {
         totalVolumeCredits += volumeCreditsFor(perf);
@@ -70,11 +70,15 @@ function renderPlainText(data) {
     return result;
 }
 
-function statement(invoice) {
+function createStatementData(invoice) {
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
-    return renderPlainText(statementData);
+    return statementData;
+}
+
+function statement(invoice) {
+    return renderPlainText(createStatementData(invoice));
 }
 
 function amountFor(perf) {
