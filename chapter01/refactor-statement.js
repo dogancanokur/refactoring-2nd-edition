@@ -48,23 +48,33 @@ function getTotalAmount(invoice) {
     return totalAmount;
 }
 
-function renderPlainText(invoice) {
+function enrichPerformance(aPerformance) {
+    const result = Object.assign({}, aPerformance);
+    result.play = playFor(result);
+    result.amount = amountFor(result);
+    return result;
+}
 
-    let result = `Statement for ${invoice.customer}\n`;
+function renderPlainText(data) {
 
-    for (let perf of invoice.performances) {
+    let result = `Statement for ${data.customer}\n`;
+
+    for (let perf of data.performances) {
         // print line for this order
-        result += `  ${playFor(perf).name}: ${getUsdFormat(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+        result += `  ${perf.play.name}: ${getUsdFormat(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     }
 
-    result += `Amount owed is ${getUsdFormat(getTotalAmount(invoice) / 100)}\n`;
-    result += `You earned ${getTotalVolumeCredits(invoice)} credits\n`;
+    result += `Amount owed is ${getUsdFormat(getTotalAmount(data) / 100)}\n`;
+    result += `You earned ${getTotalVolumeCredits(data)} credits\n`;
 
     return result;
 }
 
 function statement(invoice) {
-    return renderPlainText(invoice);
+    const statementData = {};
+    statementData.customer = invoice.customer;
+    statementData.performances = invoice.performances.map(enrichPerformance);
+    return renderPlainText(statementData);
 }
 
 function amountFor(perf) {
