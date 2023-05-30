@@ -32,18 +32,18 @@ function getUsdFormat(number) {
     }).format(number);
 }
 
-function getTotalVolumeCredits(invoice) { // 3 for loop will affect performance. It is helpful to pay attention
+function getTotalVolumeCredits(data) { // 3 for loop will affect performance. It is helpful to pay attention
     let totalVolumeCredits = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
         totalVolumeCredits += volumeCreditsFor(perf);
     }
     return totalVolumeCredits;
 }
 
-function getTotalAmount(invoice) {
+function getTotalAmount(data) {
     let totalAmount = 0;
-    for (let perf of invoice.performances) {
-        totalAmount += amountFor(perf);
+    for (let perf of data.performances) {
+        totalAmount += perf.amount;
     }
     return totalAmount;
 }
@@ -81,24 +81,24 @@ function statement(invoice) {
     return renderPlainText(createStatementData(invoice));
 }
 
-function amountFor(perf) {
+function amountFor(performance) {
     let thisAmount = 0;
-    switch (playFor(perf).type) {
+    switch (performance.play.type) {
         case "tragedy":
             thisAmount = 40000;
-            if (perf.audience > 30) {
-                thisAmount += 1000 * (perf.audience - 30);
+            if (performance.audience > 30) {
+                thisAmount += 1000 * (performance.audience - 30);
             }
             break;
         case "comedy":
             thisAmount = 30000;
-            if (perf.audience > 20) {
-                thisAmount += 10000 + 500 * (perf.audience - 20);
+            if (performance.audience > 20) {
+                thisAmount += 10000 + 500 * (performance.audience - 20);
             }
-            thisAmount += 300 * perf.audience;
+            thisAmount += 300 * performance.audience;
             break;
         default:
-            throw new Error(`unknown type: ${playFor(perf).type}`);
+            throw new Error(`unknown type: ${performance.play.type}`);
     }
     return thisAmount;
 }
