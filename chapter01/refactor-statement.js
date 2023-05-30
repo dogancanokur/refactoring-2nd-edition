@@ -32,22 +32,32 @@ function getUsdFormat(number) {
     }).format(number);
 }
 
-function statement(invoice) {
+function getTotalVolumeCredits(invoice) { // 3 for loop performansa etki edecektir. dikkat etmek fayda sağlar
+    let totalVolumeCredits = 0;
+    for (let perf of invoice.performances) {
+        totalVolumeCredits += volumeCreditsFor(perf);
+    }
+    return totalVolumeCredits;
+}
+
+function getTotalAmount(invoice) {
     let totalAmount = 0;
-    let volumeCredits = 0;
+    for (let perf of invoice.performances) {
+        totalAmount += amountFor(perf);
+    }
+    return totalAmount;
+}
+
+function statement(invoice) {
     let result = `Statement for ${invoice.customer}\n`;
 
     for (let perf of invoice.performances) {
-
-        volumeCredits = volumeCreditsFor(perf);
-
         // print line for this order
         result += `  ${playFor(perf).name}: ${getUsdFormat(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
-        totalAmount += amountFor(perf);
     }
 
-    result += `Amount owed is ${getUsdFormat(totalAmount / 100)}\n`;
-    result += `You earned ${volumeCredits} credits\n`;
+    result += `Amount owed is ${getUsdFormat(getTotalAmount(invoice) / 100)}\n`;
+    result += `You earned ${getTotalVolumeCredits(invoice)} credits\n`;
 
     return result;
 }
