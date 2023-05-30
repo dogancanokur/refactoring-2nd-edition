@@ -32,17 +32,17 @@ function getUsdFormat(number) {
     }).format(number);
 }
 
-function getTotalVolumeCredits(data) { // 3 for loop will affect performance. It is helpful to pay attention
+function getTotalVolumeCredits(statementData) { // 3 for loop will affect performance. It is helpful to pay attention
     let totalVolumeCredits = 0;
-    for (let perf of data.performances) {
+    for (let perf of statementData.performances) {
         totalVolumeCredits += volumeCreditsFor(perf);
     }
     return totalVolumeCredits;
 }
 
-function getTotalAmount(data) {
+function getTotalAmount(statementData) {
     let totalAmount = 0;
-    for (let perf of data.performances) {
+    for (let perf of statementData.performances) {
         totalAmount += perf.amount;
     }
     return totalAmount;
@@ -64,8 +64,8 @@ function renderPlainText(data) {
         result += `  ${perf.play.name}: ${getUsdFormat(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     }
 
-    result += `Amount owed is ${getUsdFormat(getTotalAmount(data) / 100)}\n`;
-    result += `You earned ${getTotalVolumeCredits(data)} credits\n`;
+    result += `Amount owed is ${getUsdFormat(data.totalAmount / 100)}\n`;
+    result += `You earned ${data.totalVolumeCredits} credits\n`;
 
     return result;
 }
@@ -74,6 +74,8 @@ function createStatementData(invoice) {
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = getTotalAmount(statementData);
+    statementData.totalVolumeCredits = getTotalVolumeCredits(statementData);
     return statementData;
 }
 
