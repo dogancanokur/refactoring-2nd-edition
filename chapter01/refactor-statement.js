@@ -33,25 +33,18 @@ function getUsdFormat(number) {
 }
 
 function getTotalVolumeCredits(statementData) { // 3 for loop will affect performance. It is helpful to pay attention
-    let totalVolumeCredits = 0;
-    for (let perf of statementData.performances) {
-        totalVolumeCredits += volumeCreditsFor(perf);
-    }
-    return totalVolumeCredits;
+    return statementData.performances.reduce((total, performance) => total + performance.volumeCredits, 0);
 }
 
 function getTotalAmount(statementData) {
-    let totalAmount = 0;
-    for (let perf of statementData.performances) {
-        totalAmount += perf.amount;
-    }
-    return totalAmount;
+    return statementData.performances.reduce((total, performance) => total + performance.amount, 0);
 }
 
 function enrichPerformance(aPerformance) {
     const result = Object.assign({}, aPerformance);
     result.play = playFor(result);
     result.amount = amountFor(result);
+    result.volumeCredits = volumeCreditsFor(result);
     return result;
 }
 
