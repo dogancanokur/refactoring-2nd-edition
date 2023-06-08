@@ -41,6 +41,10 @@ class PerformanceCalculator {
         this.play = performance.play;
     }
 
+    get amount() {
+        throw new Error('subclass responsibility');
+    }
+
     get volumeCredits() {
         return Math.max(this.performance.audience - 30, 0);
     }
