@@ -33,8 +33,6 @@ function enrichPerformance(aPerformance) {
 }
 
 class PerformanceCalculator {
-    performance;
-    play;
 
     constructor(performance) {
         this.performance = performance;

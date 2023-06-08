@@ -1,15 +1,5 @@
 import createStatementData, {createPerformanceCalculator, playFor} from './createStatementData.js';
 
-const invoice = [{
-    customer: "BigCo", performances: [{
-        playID: "hamlet", audience: 55,
-    }, {
-        playID: "as-like", audience: 35,
-    }, {
-        playID: "othello", audience: 40,
-    },],
-},];
-
 function getUsdFormat(number) {
     return new Intl.NumberFormat("en-US", {
         style: "currency", currency: "USD", minimumFractionDigits: 2,
@@ -31,14 +21,8 @@ function renderPlainText(data) {
     return result;
 }
 
-function statement(invoice) {
+export default function statement(invoice) {
     return renderPlainText(createStatementData(invoice));
-}
-
-console.log(statement(invoice[0]));
-
-function htmlStatement(invoice) {
-    return renderHtml(createStatementData(invoice));
 }
 
 function renderHtml(data) {
@@ -53,4 +37,6 @@ function renderHtml(data) {
     return result;
 }
 
-console.log(htmlStatement(invoice[0]));
+export function htmlStatement(invoice) {
+    return renderHtml(createStatementData(invoice));
+}
