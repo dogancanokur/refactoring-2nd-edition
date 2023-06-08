@@ -23,43 +23,67 @@ function getTotalAmount(statementData) {
 }
 
 function enrichPerformance(aPerformance) {
+    let play = playFor(aPerformance);
+    const calculator = createPerformanceCalculator(aPerformance, play);
     const result = Object.assign({}, aPerformance);
-    result.play = playFor(result);
-    result.amount = amountFor(result);
-    result.volumeCredits = volumeCreditsFor(result);
+    result.play = play;
+    result.amount = calculator.amount;
+    result.volumeCredits = calculator.volumeCredits;
     return result;
 }
 
-function volumeCreditsFor(perf) {
-    let result = Math.max(perf.audience - 30, 0);
-    if ("comedy" === playFor(perf).type) {
-        result += Math.floor(perf.audience / 5);
+class PerformanceCalculator {
+    performance;
+    play;
+
+    constructor(performance) {
+        this.performance = performance;
+        this.play = performance.play;
     }
-    return result;
+
+    get volumeCredits() {
+        return Math.max(this.performance.audience - 30, 0);
+    }
+
 }
 
-function playFor(perf) {
+class TragedyCalculator extends PerformanceCalculator {
+    get amount() {
+        let result = 40000;
+        if (this.performance.audience > 30) {
+            result += 1000 * (this.performance.audience - 30);
+        }
+        return result;
+    }
+}
+
+class ComedyCalculator extends PerformanceCalculator {
+    get amount() {
+        let result = 30000;
+        if (this.performance.audience > 20) {
+            result += 10000 + 500 * (this.performance.audience - 20);
+        }
+        result += 300 * this.performance.audience;
+        return result;
+    }
+
+    get volumeCredits() {
+        return super.volumeCredits + Math.floor(this.performance.audience / 5);
+    }
+
+}
+
+export const playFor = (perf) => {
     return plays[perf.playID];
-}
+};
 
-export function amountFor(performance) {
-    let thisAmount = 0;
-    switch (performance.play.type) {
+export function createPerformanceCalculator(performance, play) {
+    switch (playFor(performance).type) {
         case "tragedy":
-            thisAmount = 40000;
-            if (performance.audience > 30) {
-                thisAmount += 1000 * (performance.audience - 30);
-            }
-            break;
+            return new TragedyCalculator(performance, play);
         case "comedy":
-            thisAmount = 30000;
-            if (performance.audience > 20) {
-                thisAmount += 10000 + 500 * (performance.audience - 20);
-            }
-            thisAmount += 300 * performance.audience;
-            break;
+            return new ComedyCalculator(performance, play);
         default:
             throw new Error(`unknown type: ${performance.play.type}`);
     }
-    return thisAmount;
 }

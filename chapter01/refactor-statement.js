@@ -1,4 +1,4 @@
-import createStatementData, {amountFor} from './createStatementData.js';
+import createStatementData, {createPerformanceCalculator, playFor} from './createStatementData.js';
 
 const invoice = [{
     customer: "BigCo", performances: [{
@@ -22,7 +22,7 @@ function renderPlainText(data) {
 
     for (let perf of data.performances) {
         // print line for this order
-        result += `  ${perf.play.name}: ${getUsdFormat(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+        result += `  ${playFor(perf).name}: ${getUsdFormat(createPerformanceCalculator(perf, playFor(perf)).amount / 100)} (${perf.audience} seats)\n`;
     }
 
     result += `Amount owed is ${getUsdFormat(data.totalAmount / 100)}\n`;
